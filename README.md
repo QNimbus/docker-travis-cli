@@ -7,6 +7,7 @@
   - [Running simple travis commands](#running-simple-travis-commands)
   - [Running travis commands that require authentication](#running-travis-commands-that-require-authentication)
 - [Extra](#extra)
+- [TODO](#todo)
 - [License](#license)
 
 ## Why
@@ -80,6 +81,10 @@ Or to start the interactive client:
 To remove the aliases later on:
 
 `$ unalias travis-cli travis-clii`
+
+## TODO
+
+- Create a shell script that will auto login using environment variables so you can run authenticated commands without having to use an interactive container.
 
 ## License
 
