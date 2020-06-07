@@ -1,0 +1,44 @@
+language: ruby
+os: linux
+dist: bionic
+
+services:
+  - docker
+
+env:
+  global:
+    - DOCKER_PUSHRM_SRC="https://github.com/christian-korneck/docker-pushrm/releases/download/v1.0.0/docker-pushrm_linux_amd64"
+    - DOCKER_PUSHRM_PATH="${PWD}/docker-pushrm"
+    - DOCKER_IMAGE_ID="${DOCKER_USERNAME}/docker-travis-cli"
+    - DOCKER_IMAGE_ID_TAG="${DOCKER_IMAGE_ID}:latest"
+
+# Prepare the machine before any code installation scripts
+before_install:
+  - 'wget $DOCKER_PUSHRM_SRC -O $DOCKER_PUSHRM_PATH'
+  - 'chmod +x $DOCKER_PUSHRM_PATH'
+  - 'sudo mv $DOCKER_PUSHRM_PATH /usr/local/bin'
+  - './.travis/main.sh'
+
+before_script:
+  - docker version
+
+# First execute the test suite.
+# After the test execution is done and didn't fail, build the images
+# (if this step fails the whole Travis build is considered a failure).
+script:
+  - 'make test'
+  - 'make image'
+
+# To have `DOCKER_USERNAME` and `DOCKER_PASSWORD` filled you need to either use `travis`' cli and then `travis set ..`
+# or go to the travis page of your repository and then change the environment in the settings pannel.
+deploy:
+  # Deploy docker image to registry
+  - provider: script
+    script: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && make push-image
+    on:
+      branch: master
+  # Deploy README.md to docker image registry
+  - provider: script
+    script: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && make push-readme
+    on:
+      branch: master
