@@ -1,4 +1,4 @@
-IMAGE := qnimbus/docker-travis-cli
+IMAGE := ${DOCKER_IMAGE_ID}
 VERSION:= $(shell grep DOCKER_TRAVIS_CLI Dockerfile | awk '{print $2}' | cut -d '=' -f 2)
 
 test:
@@ -13,6 +13,6 @@ push-image:
 	docker push ${IMAGE}:latest
 
 push-readme:
-	docker-pushrm ${IMAGE}
+	docker-pushrm ${IMAGE}:latest
 
 .PHONY: image push-image push-readme test
